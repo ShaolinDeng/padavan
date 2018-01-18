@@ -241,6 +241,9 @@ func_fill()
 #modprobe ip_set_list_set
 #modprobe xt_set
 
+# Enable KSM
+echo 1 > /sys/kernel/mm/ksm/run
+
 EOF
 		chmod 755 "$script_started"
 	fi
