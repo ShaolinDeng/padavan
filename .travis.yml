@@ -1,0 +1,60 @@
+dist: trusty
+sudo: required
+
+language: bash
+
+branches:
+  only: master
+
+notifications:
+  email: false
+
+git:
+  depth: 5
+
+addons:
+  apt:
+    packages:
+      - autoconf
+      - automake
+      - autopoint
+      - build-essential
+      - libtool
+      - pkg-config
+      - bison
+      - flex
+      - git
+      - gawk
+      - gettext
+      - libgmp3-dev
+      - libmpc-dev
+      - libmpfr-dev
+      - texinfo
+      - zlib1g-dev
+
+env:
+  global:
+    - secure: "FbHkoXN+XlevKA2AkPIFcQK02/JmD6UnBJojROE9pCEaTHk7vGuKJYorULLyyGKgzGxZvV7AOkg0EBCu2flEeldhm4DwKmeDvQDMQBU2zUIUdPRXnyP+eX9HS/SzV4K42/9PJ6a8NuVq8FlZP80Cf+6UMPH/G3t06vJP7DWj37/CmzONfw2wqGc9+ErLzUI9TCAwvQRpsJOQJcAt7xMvhAwrm6pGJ9DYUKqJsZq2c8YOpwHe9crTlGmAbb1G2OoeG9S3Z9FpZb/V59zkUzbQLpECdyqGnvoajbG1wPXNfuipjPbcR+or12jaAUKAQeIjuUjYrkqxeZG5D31JPuB3Gog9h4jP7gM7MG805/sMu2Z1hOa9gX3Tq4YCToJcKL/Tuyf5Tbwx/vt94tDG/YzHqOkLgstHH/Ud+MT8d5+/XHKFaHbElPUMS1LsW9FvsPcGuxrB4/GVOQ3wUAdlXU2K45l7PEeMd8lRhnGVlxYL2SuA6iAKT+1ag8+vx8cabmTew5YTBtDRzMXcxXRGkvQrjnezz/hJOCB1OVe8NvA9J/Ulk67rO8656F3lqPOUW3cNAJyN5OJr2b5JFGHj4vETHq7V6tZDWN8rsnYMRQFVWD4Wx8j5pdbqVTafbrXic/t8givXFsEg7oTkS9Ge5CAnPIKZOI80ouq6DxImxeR4urQ="
+
+before_script:
+  - export TZ=Asia/Shanghai
+  - export TOOLCHAIN_FULL_PATH=$TRAVIS_BUILD_DIR/toolchain-mipsel
+
+script:
+  - mkdir release
+  - while sleep 60s; do echo "keep building":" $SECONDS seconds"; done &
+  - bash build.sh > release/build.log 2>&1
+  - kill %1
+
+after_success:
+  - cp trunk/images/*.trx release
+
+deploy:
+  provider: pages
+  local-dir: release
+  target-branch: release
+  keep-history: true
+  skip-cleanup: true
+  github-token: ${GITHUB_TOKEN}
+  on:
+    branch: master
